@@ -13,22 +13,25 @@ class SantoriniCLI:
     def run(self):
         """Start the game with the provided board state."""
 
-        # Display the initial board state
-        print(str(self._board))
+# eventually should be while not self._board.is_game_over():
+        while True:
 
-        sys.exit(0)
+            # Display the initial board state
+            print(str(self._board))
+
+        #sys.exit(0)
         
-        # # Perform the first move
-        # self._create_move()
+            # Perform the first move
+            self._create_move()
 
     def _create_move(self):
         """Perform a move in the game."""
 
         # Get input for worker and direction to move
 
-        # worker = input("Select a worker to move\n")
-        # move_direction = input("Select a direction to move (n, ne, e, se, s, sw, w, nw)\n")
-        # build_direction = input("Select a direction to build (n, ne, e, se, s, sw, w, nw)\n")
+        worker = input("Select a worker to move\n")
+        move_direction = input("Select a direction to move (n, ne, e, se, s, sw, w, nw)\n")
+        build_direction = input("Select a direction to build (n, ne, e, se, s, sw, w, nw)\n")
 
         # player_move = Move(worker, move_direction, build_direction)
         # # Perform the move
@@ -38,7 +41,7 @@ class SantoriniCLI:
         #     print(f"Error: {str(e)}")
         #     sys.exit(1)
 
-        # # Display the updated board state
+        # Display the updated board state
         # self._board.display()
 
     def _quit(self):
