@@ -33,6 +33,8 @@ class SantoriniCLI:
         move_direction = input("Select a direction to move (n, ne, e, se, s, sw, w, nw)\n")
         build_direction = input("Select a direction to build (n, ne, e, se, s, sw, w, nw)\n")
 
+        print(f"{worker},{move_direction},{build_direction}")
+
         # player_move = Move(worker, move_direction, build_direction)
         # # Perform the move
         # try:
