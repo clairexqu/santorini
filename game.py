@@ -5,8 +5,14 @@ class Game:
 
     def __init__(self):
         self._board = Board()
-        #self._state = PlacementState()
-
+        self.player1 = None
+        self.player2 = None 
+        self.players = [self.player1, self.player2]
+        self.turn = 0
+        
+    def is_game_over(self):
+        pass
+     
     def place_worker(self, worker, row, col):
         # Implement worker placement logic
         pass

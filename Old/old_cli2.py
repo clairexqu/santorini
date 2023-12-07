@@ -2,6 +2,8 @@ import sys
 import abc
 from game import Game
 
+#CONVERTING THIS TO GAME 
+
 class StateCLI(metaclass=abc.ABCMeta):
     """Base class for game states."""
     @abc.abstractmethod
@@ -64,10 +66,9 @@ class GameOverState(StateCLI):
 
     def run(self):
         """Start the game with the provided board state."""
-        while True:
-            print(str(self._board))
-            self._state.handle_input(self)
-            self._state.update(self)
+        print(str(self._board))
+        self._state.handle_input(self)
+        self._state.update(self)
 
 class SantoriniGameStateManager:
     """Driver class for a command-line REPL interface to the Santorini game"""
@@ -78,8 +79,10 @@ class SantoriniGameStateManager:
 
     def start(self):
         """Start the game with the provided board state."""
-        self.state.handle_input(self.game)
-
+        while True:
+            self.state.handle_input(self.game)
+            self.state.update(self.game)
+        
 if __name__ == "__main__":
     try:
         manager = SantoriniGameStateManager()  # Create an instance of SantoriniGameStateManager
