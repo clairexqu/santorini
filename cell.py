@@ -5,5 +5,7 @@ class Cell:
         self._height = height
         self._worker_character = worker_character
 
+
+# how to print cell such that we check for if it has a worker?
     def __str__(self):
         return f"{self._height}{self._worker_character}"
