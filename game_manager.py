@@ -54,7 +54,7 @@ class SetUpState(GameManagerState):
 class PlayGameState(GameManagerState):
     """State representing ..."""
 
-    def handle_state(self):
+    def handle_state(self): #executes a turn 
         pass
         if manager.game.is_game_over(): #maybe have it as a method instead of actual boolean
              manager.state(GameOverState())
