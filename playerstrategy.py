@@ -56,22 +56,22 @@ class ConcreteStrategyHeuristic(PlayerStrategy):
         pass
 
 
-def main():
-    concrete_strategy_a = ConcreteStrategyA()
-    context = Context(concrete_strategy_a)
-    context.context_interface()
+# def main():
+#     concrete_strategy_a = ConcreteStrategyA()
+#     context = Context(concrete_strategy_a)
+#     context.context_interface()
 
-    context.set_strategy(ConcreteStrategyB())
-    context.context_interface()
+#     context.set_strategy(ConcreteStrategyB())
+#     context.context_interface()
 
-    context = Context(strategy_b)
-    context.context_interface()
+#     context = Context(strategy_b)
+#     context.context_interface()
 
-    context2 = strategy_a
-    context2()
-    context2 = strategy_b
-    context2()
+#     context2 = strategy_a
+#     context2()
+#     context2 = strategy_b
+#     context2()
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
