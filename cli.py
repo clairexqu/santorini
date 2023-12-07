@@ -1,64 +1,89 @@
 import sys
+import abc
+from game import Game
 
-#from game import Game
-from board import Board
+class StateCLI(metaclass=abc.ABCMeta):
+    """Base class for game states."""
+    @abc.abstractmethod
+    def handle_input(self, game):
+        raise NotImplementedError()
+    
+    @abc.abstractmethod
+    def update(self, game):
+        raise NotImplementedError()
 
-class SantoriniCLI:
-    """Driver class for a command-line REPL interface to the Santorini game"""
+class PickPieceState(StateCLI):
+    """State representing the movement phase."""
 
-    def __init__(self):
-        #self._game = Game()
-        self._board = Board()
+    def handle_input(self, game):
+        worker = input("Select a worker to move: ")
+
+    def update(self, game):
+        if game.is_game_over():
+            game.set_state(GameOverState())
+
+class PlacementState(StateCLI):
+    """State representing the worker placement phase."""
+
+    def handle_input(self, game):
+        position = input("Select a position to place the worker (row column): ")
+        #game.place_worker(worker, row, col)
+
+    def update(self, game):
+        if game.is_placement_complete():
+            game.set_state(BuildingState())
+
+
+class BuildingState(StateCLI):
+    """State representing the building phase."""
+
+    def handle_input(self, game):
+        position = input("Select a position to build (row column): ")
+        game.build_level(row, col)
+
+    def update(self, game):
+        if game.is_building_complete():
+            game.set_state(MovementState())
+
+class GameOverState(StateCLI):
+    """State representing the game over phase."""
+
+    def handle_input(self, game):
+        choice = input("The game is over. Would you like to play another game? (yes/no): ")
+        if choice.lower() == "yes":
+            game.reset()
+            game.set_state(PlacementState())
+        else:
+            sys.exit(0)
+
+    def update(self, game):
+        pass
+
+    def set_state(self, state):
+        self._state = state
 
     def run(self):
         """Start the game with the provided board state."""
-
-# eventually should be while not self._board.is_game_over():
         while True:
-
-            # Display the initial board state
             print(str(self._board))
+            self._state.handle_input(self)
+            self._state.update(self)
 
-        #sys.exit(0)
-        
-            # Perform the first move
-            self._create_move()
+class SantoriniGameStateManager:
+    """Driver class for a command-line REPL interface to the Santorini game"""
 
-    def _create_move(self):
-        """Perform a move in the game."""
+    def __init__(self):
+        self.game = Game()
+        self.state = PickPieceState()
 
-        # Get input for worker and direction to move
+    def start(self):
+        """Start the game with the provided board state."""
+        self.state.handle_input(self.game)
 
-        worker = input("Select a worker to move\n")
-        move_direction = input("Select a direction to move (n, ne, e, se, s, sw, w, nw)\n")
-        build_direction = input("Select a direction to build (n, ne, e, se, s, sw, w, nw)\n")
-
-        print(f"{worker},{move_direction},{build_direction}")
-
-        # player_move = Move(worker, move_direction, build_direction)
-        # # Perform the move
-        # try:
-        #     self._game.perform_move(player_move)
-        # except Exception as e:
-        #     print(f"Error: {str(e)}")
-        #     sys.exit(1)
-
-        # Display the updated board state
-        # self._board.display()
-
-    def _quit(self):
-        sys.exit(0)
-
-class Move:
-    def __init__(self, worker, move_direction, build_direction):
-        self._worker = worker
-        self._move_direction = move_direction
-        self._build_direction = build_direction
-    
-    
 if __name__ == "__main__":
     try:
-        SantoriniCLI().run()
+        manager = SantoriniGameStateManager()  # Create an instance of SantoriniGameStateManager
+        manager.start()  # Call the start method on the instance
     except Exception as e:
         print("Sorry! Something unexpected happened.")
         sys.exit(0)
