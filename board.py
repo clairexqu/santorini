@@ -1,9 +1,5 @@
 from cell import Cell
-
-class Coordinate:
-    def __init__(self, row, column):
-        self.row = row
-        self.column = column
+from coordinate import Coordinate
 
 class Board:
     """Class representing the Santorini game board"""

@@ -12,7 +12,7 @@ class SetUpState(GameManagerState):
     """State representing ..."""
 
     def handle_state(self, manager):
-        print("1. Game set up\n")
+        #print("1. Game set up\n")
         manager.game = Game()
         manager.state = PlayGameState()
 
@@ -20,8 +20,9 @@ class PlayGameState(GameManagerState):
     """State representing ..."""
 
     def handle_state(self, manager): #executes a turn 
-        print("2. Play game state\n")
-        manager.game.print_board()
+        #print("2. Play game state\n")
+        #manager.game.print_board()
+        print(str(manager.game))
         manager.game.execute_turn()
         if manager.game.is_game_over(): #maybe have it as a method instead of actual boolean
              manager.state = GameOverState()
@@ -30,7 +31,7 @@ class GameOverState(GameManagerState):
     """State representing the game over phase."""
 
     def handle_state(self, manager):
-        print("game over\n")
+        #print("game over\n")
         choice = input("Play again?\n")
         if choice.lower() == "yes":
             manager.state = SetUpState()

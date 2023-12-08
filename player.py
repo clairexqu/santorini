@@ -1,4 +1,4 @@
-from worker import Worker 
+from turn import Turn
 
 class Player:
     def __init__(self, color, workers):
@@ -9,7 +9,7 @@ class Player:
         self._color = color
         self._workers = workers
 
-    def create_move(self):
+    def build_turn(self, turn, board):
         pass
 
     def __str__(self):
@@ -27,19 +27,19 @@ class HumanPlayer(Player):
     # def __init__(self, *args, **kwargs):
     #     super().__init__(*args, **kwargs)
 
-    def get_player(self):
-        input("Select a worker to move")
+    def get_worker(self):
+        return input("Select a worker to move\n")
 
     def get_placement(self):
-        input("Select a direction to move (n, ne, e, se, s, sw, w, nw)")
+        return input("Select a direction to move (n, ne, e, se, s, sw, w, nw)\n")
 
     def get_build(self):
-        input("Select a direction to build (n, ne, e, se, s, sw, w, nw)")
+        return input("Select a direction to build (n, ne, e, se, s, sw, w, nw)\n")
 
-    def create_move(self):
-        # IMPLEMENT
-        pass
-
+    def build_turn(self, turn, board):
+        turn.worker = self.get_worker()
+        turn.placement_direction = self.get_placement()
+        turn.build_direction = self.get_build()
 
 class AIPlayer(Player):
     # def __init__(self, *args, **kwargs):
@@ -53,7 +53,7 @@ class AIPlayer(Player):
 
     # IMPLEMENT random build
 
-    def create_move(self, *args, **kwargs):
+    def build_turn(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
 
@@ -69,7 +69,7 @@ class AIHeuristic(AIPlayer):
     def build(self):
         pass
 
-    def create_move(self):
+    def build_turn(self):
         pass
 
 
@@ -85,5 +85,5 @@ class AIRandom(AIPlayer):
     def build(self):
         pass
 
-    def create_move(self):
+    def build_turn(self):
         pass
