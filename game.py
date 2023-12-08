@@ -40,3 +40,5 @@ class Game:
     def reset(self):
         # Reset the game state
         pass
+
+# IMPLEMENT validate moves
