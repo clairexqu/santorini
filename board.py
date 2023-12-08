@@ -17,9 +17,9 @@ class Board:
             "Y": Coordinate(1, 1),
             "Z": Coordinate(3, 3)}
         
-        self.set_start_position()
+        self.set_worker_start_position()
     
-    def set_start_position(self):
+    def set_worker_start_position(self):
         #print("HERE\n\n")
         for worker, coordinate in self.workers.items():
             self.update_cell(coordinate.row, coordinate.column, worker)
