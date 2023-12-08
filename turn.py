@@ -2,10 +2,12 @@ from coordinate import Coordinate
 
 
 class Turn:
-    def __init__(self, worker=None, placement_direction=None, build_direction=None):
-        self.worker = worker
-        self.placement_direction = placement_direction
-        self.build_direction = build_direction
+    def __init__(self):
+        self.worker = None
+        self.placement_direction = None
+        self.build_direction = None
+        self.placement_transformation_coordinate = None 
+        self.build_transformation_coordinate = None  
 
     def __str__(self):
         """Return the current board state."""

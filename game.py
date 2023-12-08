@@ -13,7 +13,7 @@ class Game:
         self.player1 = HumanPlayer("white", ['A', 'B'])
         self.player2 = HumanPlayer("blue", ['Y', 'Z'])
         self.players = [self.player2, self.player1]
-        self.turn = 1
+        self._turn_number = 1
 
     def create_player():
         pass
@@ -30,6 +30,8 @@ class Game:
         turn_builder_command = TurnBuilderCommand(self._board, current_player)
         turn_builder_command.execute()
 
+
+
         turn = turn_builder_command.get_turn()
 
         print(str(turn))
@@ -39,18 +41,18 @@ class Game:
         #move_command = MoveCommand(board, move)
         #move_command.execute()
         
-        self.turn = self.turn + 1
+        self._turn_number = self._turn_number + 1
         #move = players[self.turn % 2].build_turn() #send in own workers and other players works 
         #self._board.update_board()
         #pass 
 
     def _current_player(self):
-        return self.players[self.turn % 2]
+        return self.players[self._turn_number % 2]
         
     def __str__(self):
         # USE THIS EVENTUALLY 
         game_str = ""
-        game_str += f"{str(self._board)}\nTurn: {str(self.turn)}, {str(self._current_player())}"
+        game_str += f"{str(self._board)}\nTurn: {str(self._turn_number)}, {str(self._current_player())}"
         return game_str
     
     # def _print_turn_info(self):
@@ -62,7 +64,7 @@ class Game:
         print(str(self._board))
 
     def is_game_over(self):
-        if self.turn == 3:
+        if self._turn_number == 3:
             return True
         return False 
 
