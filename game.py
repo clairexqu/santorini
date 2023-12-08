@@ -64,7 +64,7 @@ class Game:
         print(str(self._board))
 
     def is_game_over(self):
-        if self._turn_number == 3:
+        if self._turn_number == 2:
             return True
         return False 
 

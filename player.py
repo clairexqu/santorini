@@ -20,7 +20,7 @@ class Player:
         will inherit (template).
         """
         self._color = color
-        self._workers = workers
+        self._own_workers = workers
 
     def build_turn(self, turn, board):
         pass
@@ -29,7 +29,7 @@ class Player:
         """Return the current board state."""
         player_str = ""
         player_str += f"{self._color} ("
-        for worker in self._workers:
+        for worker in self._own_workers:
             player_str += f"{str(worker)}"
         player_str += ")"
 
@@ -40,20 +40,48 @@ class HumanPlayer(Player):
     # def __init__(self, *args, **kwargs):
     #     super().__init__(*args, **kwargs)
 
-    def get_worker(self):
-        return input("Select a worker to move\n").upper()
+    def get_worker(self, workers_dict):
+        while True:
+            selected_worker = input("Select a worker to move\n").upper()
+            if selected_worker not in workers_dict:
+                print("Not a valid worker")
+                continue
+            elif selected_worker not in self._own_workers:
+                print("That is not your worker")
+                continue
+            return selected_worker
+        # return input("Select a worker to move\n").upper()
 
     def get_placement(self):
-        return input("Select a direction to move (n, ne, e, se, s, sw, w, nw)\n").lower()
+        while True:
+            selected_placement = input("Select a direction to move (n, ne, e, se, s, sw, w, nw)\n").lower()
+            if selected_placement not in DIRECTION_TRANSFORMATION:
+                print("Not a valid direction")
+                continue
+        # CHECK FOR VALID DIRECTION: "Cannot move <direction>"
+            return selected_placement
+        # return input("Select a direction to move (n, ne, e, se, s, sw, w, nw)\n").lower()
 
     def get_build(self):
-        return input("Select a direction to build (n, ne, e, se, s, sw, w, nw)\n").lower()
-
-    def build_turn(self, turn, board):
-        turn.worker = self.get_worker()
-        turn.placement_direction = self.get_placement()
+        while True:
+            selected_build = input("Select a direction to build (n, ne, e, se, s, sw, w, nw)\n").lower()
+            if selected_build not in DIRECTION_TRANSFORMATION:
+                print("Not a valid direction")
+                continue
+        # CHECK FOR VALID DIRECTION: "Cannot build <direction>"
+            return selected_build
         
+    def build_turn(self, turn, board):
+        turn.worker = self.get_worker(board.workers)
+        
+        turn.placement_direction = self.get_placement()
+        turn.placement_transformation_coordinate = DIRECTION_TRANSFORMATION[turn.placement_direction]
+        #print(str(turn.placement_transformation_coordinate))
+
         turn.build_direction = self.get_build()
+        turn.build_transformation_coordinate = DIRECTION_TRANSFORMATION[turn.build_direction]
+        #print(str(turn.build_transformation_coordinate))
+        
 
 
 class AIPlayer(Player):
