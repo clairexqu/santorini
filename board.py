@@ -25,3 +25,7 @@ class Board:
         
         return board_str
 
+    def reset_board(self):
+        pass
+    # set all heights to zero and pieces back to default starting position, turn back to 1
+    # erase undo redo
