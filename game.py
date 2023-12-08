@@ -1,5 +1,6 @@
 from board import Board
 from player import HumanPlayer
+from worker import Worker
 
 class Game:
     """Class representing the Santorini game"""
@@ -7,16 +8,24 @@ class Game:
     def __init__(self):
         self._board = Board()
 
-        self._board[3][1] = Cell(0, 'A')
-        self._board[1][3] = Cell(0, 'B')
+        #self._board[3][1] = Cell(0, 'A')
+        #self._board[1][3] = Cell(0, 'B')
         
-        self._board[1][1] = Cell(0, 'Y')
-        self._board[3][3] = Cell(0, 'Z')
+        #self._board[1][1] = Cell(0, 'Y')
+        #self._board[3][3] = Cell(0, 'Z')
 
-        self.player1 = HumanPlayer()
-        self.player2 = HumanPlayer()
+        #self.player1 = HumanPlayer()
+        #self.player2 = HumanPlayer()
+        self.enable_undo_redo = False 
+        self.enable_score_display = False 
+
+        self.player1 = HumanPlayer("white", [Worker('A', 3, 1), Worker('A', 1, 3)])
+        self.player2 = HumanPlayer("blue", [Worker('Y', 1, 1), Worker('Z', 3, 3)])
         self.players = [self.player2, self.player1]
         self.turn = 1
+
+    def create_player():
+        pass
 
     def execute_turn(self):
         self._print_turn_info()
