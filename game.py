@@ -1,6 +1,6 @@
 from board import Board
 from player import HumanPlayer
-from turn_commands import TurnBuilderCommand#, DoTurnCommand
+from turn_commands import TurnBuilderCommand, DoTurnCommand
 
 class Game:
     """Class representing the Santorini game"""
@@ -29,19 +29,14 @@ class Game:
 
         turn_builder_command = TurnBuilderCommand(self._board, current_player)
         turn_builder_command.execute()
-
-
-
         turn = turn_builder_command.get_turn()
-
-        print(str(turn))
-
-        #move = move_builder_command.get_move()
-        # Execute the move
-        #move_command = MoveCommand(board, move)
-        #move_command.execute()
         
+        do_turn = DoTurnCommand(self._board, turn)
+        do_turn.execute()
+
         self._turn_number = self._turn_number + 1
+        print(str(turn))
+        
         #move = players[self.turn % 2].build_turn() #send in own workers and other players works 
         #self._board.update_board()
         #pass 
@@ -59,14 +54,23 @@ class Game:
     #     print("Turn: " + str(self.turn) + " player: " + str(self.turn % 2) + "\n")
     #     pass
 
-
     def print_board(self):
         print(str(self._board))
 
     def is_game_over(self):
-        if self._turn_number == 2:
+        #print("CHECKING GAME OVER\n")
+        winner = self._board.worker_on_three()
+        if winner:
+            # print(str(self._board))
+            print(f"{winner} has won")
             return True
         return False 
+    
+    # def is_game_over(self):
+    #     if self._turn_number == 2:
+    #         self.print_board()
+    #         return True
+    #     return False 
 
     # def place_worker(self, worker, row, col):
     #     # Implement worker placement logic
@@ -95,5 +99,3 @@ class Game:
     # def reset(self):
     #     # Reset the game state
     #     pass
-
-# IMPLEMENT validate moves

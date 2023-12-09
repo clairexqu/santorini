@@ -12,31 +12,51 @@ class Board:
             "B": Coordinate(1, 3),
             "Y": Coordinate(1, 1),
             "Z": Coordinate(3, 3)}
+
+        # self.workers = {
+        #     "A": Coordinate(0, 0),
+        #     "B": Coordinate(0, 1),
+        #     "Y": Coordinate(1, 0),
+        #     "Z": Coordinate(1, 1)}
+        
+        self._board[2][2] = Cell(3, ' ')
+        self._board[3][1] = Cell(2, 'A')
         
         self.set_worker_start_position()
-    
-    def set_worker_start_position(self):
-        #print("HERE\n\n")
+
+    def worker_on_three(self):
+        #print("worker on 3 called\n")
         for worker, coordinate in self.workers.items():
-            self.update_cell(coordinate.row, coordinate.column, worker)
+            cell = self.get_cell(coordinate.row, coordinate.column) 
+            if cell.height == 3:
+                return worker
+            
+    # def both_workers_stuck(self):
 
-    def move_worker(self, worker_char, move):
-        pass
-        #update_cell()
-        #update_cell()
 
-    def update_cell(self, row, column, char):
-        self._board[row][column].worker_character = char
-    
+    def set_worker_start_position(self):
+        for worker, coordinate in self.workers.items():
+            self.update_cell(coordinate, worker, 0)
 
+    def execute_turn(self, turn):
+        worker = turn.worker
+        # remove worker from old cell
+        self.update_cell(self.workers[worker], " ", 0)
+        # add worker to new cell
+        self.update_cell(turn.placement_coordinate, worker, 0)
+        # edit the original coordinate dict
+        self.workers[turn.worker] = turn.placement_coordinate
+        # adding 1 to build cell 
+        self.update_cell(turn.build_coordinate," ", 1)
+
+    def update_cell(self, coordinate, new_char, height_add):
+        cell = self.get_cell(coordinate.row, coordinate.column)
+        cell.worker_character = new_char
+        cell.height += height_add
+
+    def get_cell(self, row, column):
+        return self._board[row][column]
         
-        # replace these 
-        # self._board[3][1] = Cell(0, 'A')
-        # self._board[1][3] = Cell(0, 'B')
-        
-        # self._board[1][1] = Cell(0, 'Y')
-        # self._board[3][3] = Cell(0, 'Z')
-
     def __str__(self):
         """Return the current board state."""
         board_str = ""

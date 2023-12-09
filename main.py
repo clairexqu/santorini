@@ -23,15 +23,18 @@ class PlayGameState(GameManagerState):
         #print("2. Play game state\n")
         #manager.game.print_board()
         print(str(manager.game))
-        manager.game.execute_turn()
+        
         if manager.game.is_game_over(): #maybe have it as a method instead of actual boolean
-             manager.state = GameOverState()
+            # print("SOMEONE HAS WON\n")
+            manager.state = GameOverState()
+        else:
+            # print("GAME EXECUTE TURN\n")
+            manager.game.execute_turn()
 
 class GameOverState(GameManagerState):
     """State representing the game over phase."""
 
     def handle_state(self, manager):
-        #print("game over\n")
         choice = input("Play again?\n")
         if choice.lower() == "yes":
             manager.state = SetUpState()

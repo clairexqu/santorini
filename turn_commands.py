@@ -16,28 +16,20 @@ class TurnBuilderCommand(Command):
     def __init__(self, board, player):
         self.board = board
         self.player = player
-        self.turn = Turn()
+        self.turn = None 
 
     def execute(self):
         # Build the turn object for the player
-        self.player.build_turn(self.turn, self.board)
+        self.turn = self.player.build_turn(self.board)
 
     def get_turn(self):
         return self.turn
 
-# class DoTurnCommand(Command):
-#     """Concrete command class for executing a move operation."""
+class DoTurnCommand(Command):
+    """Concrete command class for executing a move operation."""
+    def __init__(self, board, turn):
+        self.board = board
+        self.turn = turn 
 
-#     def execute(self):
-#         self.board.move(self.move)
-
-# class Board:
-#     """Sample board class."""
-
-#     def move(self, move):
-#         # Implement the logic for moving on the board
-#         print(f"Moving on the board with move: {move}")
-
-# # Usage example
-# board = Board()
-
+    def execute(self):
+        self.board.execute_turn(self.turn)
