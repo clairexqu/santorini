@@ -13,7 +13,7 @@ class Game:
         self.enable_score_display = False
 
         self.players = [
-            HumanPlayer("blue", ["Y", "Z"]),
+            AIRandomPlayer("blue", ["Y", "Z"]),
             AIRandomPlayer("white", ["A", "B"]),
         ]
         self._turn_number = 1
@@ -26,6 +26,16 @@ class Game:
         # self._print_turn_info()
 
         # Build the move
+        #turn_summary = ""
+
+        # undo_redo_next = input("undo, redo, or next\n").lower()
+        # if undo_redo_next == "undo":
+        #     turn_summary = self.execute_undo()
+        #     return turn_summary
+        # elif undo_redo_next == "redo":
+        #     turn_summary = self.execute_redo()
+        #     return turn_summary
+
         current_player = self._current_player()
 
         turn_builder_command = TurnBuilderCommand(self._board, current_player)
@@ -42,17 +52,22 @@ class Game:
 
         return turn_summary
     
+    def execute_undo_redo_next(self):
+        pass
+       
     def create_snapshot(self, turn_summary):
         # Create a GameSnapshot and store it in the history
-        snapshot = GameSnapshot(self._board, self._turn_number, turn_summary)
+        snapshot = GameSnapshot(self._board, turn_summary)
         self._history.append(snapshot)
     
     def execute_undo(self):
-        if len(self._history) > 1:
+        if len(self._history) > 0:
             # Restore the previous game state from the history
-            snapshot = self._history.pop()
-            self._board = snapshot.board_state
-            self._turn_number = snapshot.next_turn_number - 1
+            self._turn_number -= - 1
+            game_snapshot = self._history[self._turn_number]
+            self._board = game_snapshot.board_state
+            return game_snapshot.turn_summary 
+            #self._turn_number = snapshot.next_turn_number - 1
 
     def execute_redo(self):
         if len(self._history) < len(self._history):

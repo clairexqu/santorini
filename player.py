@@ -181,8 +181,6 @@ class AIPlayer(Player):
     def get_build(self):
         return choice(self._valid_builds)
 
-    # IMPLEMENT random build
-
     def build_turn(self, board):
         self._build_valid_placements(board)
         turn = self.get_player_and_placement()
@@ -199,10 +197,34 @@ class AIRandomPlayer(AIPlayer):
     def get_player_and_placement(self):
         return choice(self._valid_placements)
 
-
 class AIHeuristicPlayer(AIPlayer):
 
     def get_player_and_placement(self):
+        max_move_score = 0
+        best_placement = None
+
+        for placement in self._valid_placements:
+            # calculate height score, center score, distance score
+            height_score = self._calculate_height_score(placement)
+            center_score = self._calculate_center_score(placement)
+            distance_score = self._calculate_distance_score(placement)
+
+            # calculate move score using the given weights
+            move_score = 3 * height_score + 2 * center_score + 1 * distance_score
+
+            # update max_move_score and best_placement if the current placement has a higher move score
+            if move_score > max_move_score:
+                max_move_score = move_score
+                best_placement = placement
+
+        # Return the best turn with the maximum move score
+        return best_placement
+    
+    def _calculate_height_score(self, placement):
         pass
 
-  
+    def _calculate_center_score(self, placement):
+        pass
+
+    def _calculate_distance_score(self, placement):
+        pass
