@@ -1,5 +1,7 @@
 from turn import Turn
 from coordinate import Coordinate
+from random import choice
+
 
 DIRECTION_TRANSFORMATION = {
     "n": Coordinate(-1, 0),
@@ -20,8 +22,8 @@ class Player:
         """
         self._color = color
         self._own_workers = workers
-        self._valid_placements = None # This is a list of turns 
-        self._valid_builds = None # This is a list of directions 
+        self._valid_placements = [] # This is a list of turns 
+        self._valid_builds = [] # This is a list of directions 
 
     def _build_valid_placements(self, board):     
         self._valid_placements = []
@@ -86,7 +88,7 @@ class Player:
             return False      
         return True
 
-    def build_turn(self, turn, board):
+    def build_turn(self):
         pass
 
     def __str__(self):
@@ -168,8 +170,6 @@ class HumanPlayer(Player):
         turn.calc_build_coordinate()
 
         return turn
-        
-
 
 class AIPlayer(Player):
     # def __init__(self, *args, **kwargs):
@@ -178,42 +178,31 @@ class AIPlayer(Player):
     def get_player_and_placement(self):
         pass
 
-    def build():
-        pass
+    def get_build(self):
+        return choice(self._valid_builds)
 
     # IMPLEMENT random build
 
-    def build_turn(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def build_turn(self, board):
+        self._build_valid_placements(board)
+        turn = self.get_player_and_placement()
+        self._build_valid_builds(turn, board)
+        build_direction = self.get_build()
+        turn.build_direction = build_direction
+        turn.build_transformation_coordinate = DIRECTION_TRANSFORMATION[build_direction]
+        turn.calc_build_coordinate()
+
+        return turn        
+
+class AIRandomPlayer(AIPlayer):
+
+    def get_player_and_placement(self):
+        return choice(self._valid_placements)
 
 
-class AIHeuristic(AIPlayer):
-    # def __init__(self, *args, **kwargs):
-    #     super().__init__(*args, **kwargs)
+class AIHeuristicPlayer(AIPlayer):
 
-    def get_player_and_placement(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    # IMPLEMENT
-
-    def build(self):
+    def get_player_and_placement(self):
         pass
 
-    def build_turn(self):
-        pass
-
-
-class AIRandom(AIPlayer):
-    # def __init__(self, *args, **kwargs):
-    #     super().__init__(*args, **kwargs)
-
-    def get_player_and_placement(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    # IMPLEMENT
-
-    def build(self):
-        pass
-
-    def build_turn(self):
-        pass
+  

@@ -6,21 +6,30 @@ class Board:
 
     def __init__(self):
         self._board = [[Cell(0, ' ') for col in range(5)] for row in range(5)]
+        self.winner_worker = None
 
+        # correct positions 
+        
         self.workers = {
             "A": Coordinate(3, 1),
             "B": Coordinate(1, 3),
             "Y": Coordinate(1, 1),
             "Z": Coordinate(3, 3)}
 
+        # checks winning by heihgt of 3 
+        #self._board[2][2] = Cell(3, ' ')
+        #self._board[3][1] = Cell(2, 'A')
+
+        # checks winning by if player can't move 
         # self.workers = {
-        #     "A": Coordinate(0, 0),
-        #     "B": Coordinate(0, 1),
-        #     "Y": Coordinate(1, 0),
-        #     "Z": Coordinate(1, 1)}
-        
-        self._board[2][2] = Cell(3, ' ')
-        self._board[3][1] = Cell(2, 'A')
+        #     "A": Coordinate(3, 1),
+        #     "B": Coordinate(1, 3),
+        #     "Y": Coordinate(0, 0),
+        #     "Z": Coordinate(0, 1)}
+        # self._board[1][0] = Cell(2, ' ')
+        # self._board[1][1] = Cell(2, ' ')
+        # self._board[1][2] = Cell(2, ' ')
+        # self._board[0][2] = Cell(2, ' ')
         
         self.set_worker_start_position()
 
@@ -29,7 +38,7 @@ class Board:
         for worker, coordinate in self.workers.items():
             cell = self.get_cell(coordinate.row, coordinate.column) 
             if cell.height == 3:
-                return worker
+                self.winner_worker = worker
             
     # def both_workers_stuck(self):
 
@@ -48,6 +57,9 @@ class Board:
         self.workers[turn.worker] = turn.placement_coordinate
         # adding 1 to build cell 
         self.update_cell(turn.build_coordinate," ", 1)
+
+        # checks to see if a worker won
+        self.worker_on_three()
 
     def update_cell(self, coordinate, new_char, height_add):
         cell = self.get_cell(coordinate.row, coordinate.column)
