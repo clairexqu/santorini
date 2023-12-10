@@ -18,8 +18,11 @@ class Game:
             AIRandomPlayer("white", ["A", "B"]),
         ]
         self._turn_number = 1
-        self._command_history = []
-        self.create_snapshot(DoTurnCommand(self._board))
+        #self._command_history = []
+        self._command_history_undo = []
+        self._command_history_redo = []
+        #self._command_history_index = 0
+        #self.create_snapshot(DoTurnCommand(self._board))
 
     def create_player():
         pass
@@ -31,12 +34,14 @@ class Game:
 
         if undo_redo_next == "undo":
             self.execute_undo()
-            return None 
+            return None
         
+        if undo_redo_next == "redo":
+            self.execute_redo()
+            return None
         
-        if len(self._command_history) > self._turn_number + 1:
-             self._command_history = self._command_history[:self._turn_number + 2]
-          
+        #self._command_history_index += 1
+
         current_player = self._current_player()
 
         turn_builder_command = TurnBuilderCommand(self._board, current_player)
@@ -45,59 +50,83 @@ class Game:
         do_turn_command = DoTurnCommand(self._board, turn_builder_command.turn)
         do_turn_command.execute()
 
-        self._turn_number = self._turn_number + 1
+        # emptied out everytime you next
+        
 
+
+        # print("TURN # " + str(self._turn_number))
+        # print("COMMAND INDEX: " + str(self._command_history_index))
+
+        # if len(self._command_history) != self._turn_number:
+        #     print(len(self._command_history))
+        #     print(str(self._turn_number))
+        #     num_pops = (len(self._command_history) - self._turn_number) + 1
+        #     for _ in range(num_pops):
+        #         print("here")
+        #         self._command_history.pop()
+
+        self._command_history_redo = []
+
+
+        self._turn_number = self._turn_number + 1
         turn_summary = str(do_turn_command.turn)
         self.create_snapshot(do_turn_command)
+
+        # index = 0
+        # print("############")
+        # for command in self._command_history:
+        #     print(str(index) + ":\n" + str(command.get_board()) + "\n")
+        #     index += 1
+
+        # print("############")
 
         return turn_summary
 
     def create_snapshot(self, do_turn_command):
         # Create a GameSnapshot and store it in the history
         snapshot = CommandSnapshot(do_turn_command)
-        self._command_history.append(snapshot)
+        self._command_history_undo.append(snapshot)
 
     def execute_undo(self):
-        # Restore the previous game state from the history
-        # print(str(len(self._command_history)))
-        # print(str(self._turn_number))
-
-        # # if going back to to before any turn was made n
-        # if self._turn_number - 1 == 0:
-        #     self._board = Board()
-        #     return None
-        #     # print(str(self))
-        #     # exit(0)
-
-        print("\n\n")
-        if self._turn_number == 1:
-            command_snapshot = self._command_history[self._turn_number - 1]
-            return None 
-        else:
+        length = len(self._command_history_undo)
+        if length == 1:
             self._turn_number -= 1
-            command_snapshot = self._command_history[self._turn_number - 1]
-            #previous_command_snapshot = self._command_history[self._turn_number - 1]
+            self._command_history_redo.append(self._command_history_undo.pop())
+            self._board = Board()
+            #print(str(self._board))
             
-        self._board = command_snapshot.get_board()
-        #return str(previous_command_snapshot.get_turn())
-        #print(command_snapshot.get_turn())
-        #print(str(self))
-        #exit(0)
-        #turn = command_snapshot.get_turn()
-        #if turn:
-        #    return str(command_snapshot.get_turn())
+        if length > 1:
+            self._turn_number -= 1
+            self._command_history_redo.append(self._command_history_undo.pop())
+            command_snapshot = self._command_history_undo[-1]
+            self._board = command_snapshot.get_board()
+            #print(str(self._board))
+            #exit(0)
+            
 
+        # index = 0
+        # print("############")
+        # for command in self._command_history:
+        #     print(str(index) + ":\n" + str(command.get_board()) + "\n")
+        #     index += 1
+
+
+        # print("############")
 
     def execute_redo(self):
-        self._turn_number += 1
-
-        command_snapshot = self._command_history[self._turn_number]
-        self._board = command_snapshot.get_board()
-        #print(str(self._board))
-        #exit(0)
-        return str(command_snapshot.get_turn())
-
-
+        length = len(self._command_history_redo)
+        # if length == 1:
+        #     #self._turn_number -= 1
+        #     #self._board = Board()
+        #     command_snapshot = self._command_history_undo[-1]
+        #     self._board = command_snapshot.get_board()
+            
+        if length > 0:
+            self._turn_number += 1
+            command_snapshot = self._command_history_redo[-1]
+            self._board = command_snapshot.get_board()
+            self._command_history_undo.append(self._command_history_redo.pop(-1))
+            
 
     def _current_player(self):
         return self.players[self._turn_number % 2]
