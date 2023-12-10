@@ -36,6 +36,12 @@ class Player:
                 turn.calc_placement_coordinate(current_worker_coordinate)
                 
                 if self._valid_placement(current_worker_coordinate, turn.placement_coordinate, board):
+
+                    # calculate height score, center score, distance score
+                    turn.move_score.height_score = self._calculate_height_score(board, turn)
+                    turn.move_score.center_score = self._calculate_center_score(board, turn)
+                    turn.move_score.distance_score = self._calculate_distance_score(board, turn)
+                    
                     self._valid_placements.append(turn) 
                     #print(str(turn))
                     #print(len(self._valid_placements))
@@ -63,6 +69,56 @@ class Player:
             return False
         return True
     
+    def _calculate_height_score(self, board, turn):
+        # height_score is the sum of the heights of the buildings a player's workers stand on
+        
+        # get coordinate of player's other worker
+        for worker in self._own_workers:
+            if worker != turn.worker:
+                other_worker_coordinate = board.workers[turn.worker]
+                other_height = board.get_cell(other_worker_coordinate.row, other_worker_coordinate.column).height
+
+        # get height of worker in hypothetical turn
+        row = turn.placement_coordinate.row
+        column = turn.placement_coordinate.column
+        height = board.get_cell(row, column).height
+
+        height_score = other_height + height
+        return height_score
+
+    def _calculate_center_score(self, board, turn):
+        # value the center space as 2, the ring around the center as 1, the edge spaces as 0
+        # add these values for each of a player's workers to get the center_score
+        center_score = 0
+        coordinates = [turn.placement_coordinate]
+
+        # get coordinate of player's other worker
+        for worker in self._own_workers:
+            if worker != turn.worker:
+                other_worker_coordinate = board.workers[turn.worker]
+                coordinates.append(other_worker_coordinate)
+
+        for coordinate in coordinates:
+            # center square
+            if coordinate.row == 2 and coordinate.column == 2:
+                center_score += 2
+            # outer ring
+            elif (coordinate.row == 0 or coordinate.row == 4) and (coordinate.column == 0 or coordinate.column == 4):
+                center_score += 0
+            # middle ring
+            else:
+                center_score +=1
+        return center_score
+
+    def _calculate_distance_score(self, board, turn):
+        # distance_score is the sum of the minimum distance to the opponent's workers
+        # for blue, it would be min(distance from Z to A, distance from Y to A) + min(distance from Z to B, distance from Y to B)
+        distance_score = 0
+
+        return distance_score
+
+
+
     def _build_valid_builds(self, turn, board):
         self._valid_builds = []
         
@@ -198,33 +254,24 @@ class AIRandomPlayer(AIPlayer):
         return choice(self._valid_placements)
 
 class AIHeuristicPlayer(AIPlayer):
-
     def get_player_and_placement(self):
-        max_move_score = 0
-        best_placement = None
+        return max(self._valid_placements, key=self._valid_placements.move_score.total_score)
+    #     max_move_score = 0
+    #     best_placement = None
 
-        for placement in self._valid_placements:
-            # calculate height score, center score, distance score
-            height_score = self._calculate_height_score(placement)
-            center_score = self._calculate_center_score(placement)
-            distance_score = self._calculate_distance_score(placement)
+    #     for placement in self._valid_placements:
+    #         # calculate height score, center score, distance score
+    #         height_score = self._calculate_height_score(placement)
+    #         center_score = self._calculate_center_score(placement)
+    #         distance_score = self._calculate_distance_score(placement)
 
-            # calculate move score using the given weights
-            move_score = 3 * height_score + 2 * center_score + 1 * distance_score
+    #         # calculate move score using the given weights
+    #         move_score = 3 * height_score + 2 * center_score + 1 * distance_score
 
-            # update max_move_score and best_placement if the current placement has a higher move score
-            if move_score > max_move_score:
-                max_move_score = move_score
-                best_placement = placement
+    #         # update max_move_score and best_placement if the current placement has a higher move score
+    #         if move_score > max_move_score:
+    #             max_move_score = move_score
+    #             best_placement = placement
 
-        # Return the best turn with the maximum move score
-        return best_placement
-    
-    def _calculate_height_score(self, placement):
-        pass
-
-    def _calculate_center_score(self, placement):
-        pass
-
-    def _calculate_distance_score(self, placement):
-        pass
+    #     # Return the best turn with the maximum move score
+    #     return best_placement

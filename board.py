@@ -16,7 +16,7 @@ class Board:
             "Y": Coordinate(1, 1),
             "Z": Coordinate(3, 3)}
 
-        # checks winning by heihgt of 3 
+        # checks winning by height of 3 
         #self._board[2][2] = Cell(3, ' ')
         #self._board[3][1] = Cell(2, 'A')
 

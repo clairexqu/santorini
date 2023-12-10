@@ -6,6 +6,7 @@ class Turn:
         self.placement_direction = placement_direction
         self.placement_transformation_coordinate = placement_transformation_coordinate
         self.placement_coordinate = None 
+        self.move_score = MoveScore()
 
         self.build_direction = build_direction 
         self.build_transformation_coordinate = build_transformation_coordinate
@@ -23,3 +24,10 @@ class Turn:
         turn_str = "" f"{self.worker}, {self.placement_direction}, {self.build_direction}"
 
         return turn_str
+
+class MoveScore:
+    def __init__(self):
+        self.height_score = None
+        self.center_score = None
+        self.distance_score = None
+        self.total_score = 3 * self.height_score + 2 * self.center_score + 1 * self.distance_score
