@@ -22,12 +22,12 @@ class TurnBuilderCommand(Command):
         # Build the turn object for the player
         self.turn = self.player.build_turn(self.board)
 
-    def get_turn(self):
-        return self.turn
+    # def get_turn(self):
+    #     return self.turn
 
 class DoTurnCommand(Command):
     """Concrete command class for executing a move operation."""
-    def __init__(self, board, turn):
+    def __init__(self, board, turn = None):
         self.board = board
         self.turn = turn 
 

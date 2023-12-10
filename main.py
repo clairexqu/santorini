@@ -1,10 +1,11 @@
-import sys
-import abc
+
+from abc import ABCMeta, abstractmethod
+from sys import exit #
 from game import Game 
 
-class GameManagerState(metaclass=abc.ABCMeta):
+class GameManagerState(metaclass=ABCMeta):
     """Base class for game states."""
-    @abc.abstractmethod
+    @abstractmethod
     def handle_state(self):
         raise NotImplementedError()
 
@@ -34,7 +35,8 @@ class TurnState(GameManagerState):
         else:
             # print("GAME EXECUTE TURN\n")
              turn_summary = manager.game.execute_turn()
-             print(turn_summary)
+             if turn_summary:
+                print(turn_summary)
              #self.undo_redo_next()
                 
     def undo_redo_next():

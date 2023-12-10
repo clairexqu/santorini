@@ -1,7 +1,8 @@
 from board import Board
 from player import HumanPlayer, AIRandomPlayer
 from turn_commands import TurnBuilderCommand, DoTurnCommand
-from game_snapshot import GameSnapshot
+from game_snapshot import CommandSnapshot  # GameSnapshot
+from sys import exit  # delete
 
 
 class Game:
@@ -17,7 +18,8 @@ class Game:
             AIRandomPlayer("white", ["A", "B"]),
         ]
         self._turn_number = 1
-        self._history = []
+        self._command_history = []
+        self.create_snapshot(DoTurnCommand(self._board))
 
     def create_player():
         pass
@@ -25,56 +27,76 @@ class Game:
     def execute_turn(self):
         # self._print_turn_info()
 
-        # Build the move
-        #turn_summary = ""
+        undo_redo_next = input("undo, redo, or next\n").lower()
 
-        # undo_redo_next = input("undo, redo, or next\n").lower()
-        # if undo_redo_next == "undo":
-        #     turn_summary = self.execute_undo()
-        #     return turn_summary
-        # elif undo_redo_next == "redo":
-        #     turn_summary = self.execute_redo()
-        #     return turn_summary
-
+        if undo_redo_next == "undo":
+            self.execute_undo()
+            return None 
+        
+        
+        if len(self._command_history) > self._turn_number + 1:
+             self._command_history = self._command_history[:self._turn_number + 2]
+          
         current_player = self._current_player()
 
         turn_builder_command = TurnBuilderCommand(self._board, current_player)
         turn_builder_command.execute()
-        turn = turn_builder_command.get_turn()
 
-        do_turn = DoTurnCommand(self._board, turn)
-        do_turn.execute()
+        do_turn_command = DoTurnCommand(self._board, turn_builder_command.turn)
+        do_turn_command.execute()
 
         self._turn_number = self._turn_number + 1
 
-        turn_summary = str(turn)
-        self.create_snapshot(turn_summary)
+        turn_summary = str(do_turn_command.turn)
+        self.create_snapshot(do_turn_command)
 
         return turn_summary
-    
-    def execute_undo_redo_next(self):
-        pass
-       
-    def create_snapshot(self, turn_summary):
+
+    def create_snapshot(self, do_turn_command):
         # Create a GameSnapshot and store it in the history
-        snapshot = GameSnapshot(self._board, turn_summary)
-        self._history.append(snapshot)
-    
+        snapshot = CommandSnapshot(do_turn_command)
+        self._command_history.append(snapshot)
+
     def execute_undo(self):
-        if len(self._history) > 0:
-            # Restore the previous game state from the history
-            self._turn_number -= - 1
-            game_snapshot = self._history[self._turn_number]
-            self._board = game_snapshot.board_state
-            return game_snapshot.turn_summary 
-            #self._turn_number = snapshot.next_turn_number - 1
+        # Restore the previous game state from the history
+        # print(str(len(self._command_history)))
+        # print(str(self._turn_number))
+
+        # # if going back to to before any turn was made n
+        # if self._turn_number - 1 == 0:
+        #     self._board = Board()
+        #     return None
+        #     # print(str(self))
+        #     # exit(0)
+
+        print("\n\n")
+        if self._turn_number == 1:
+            command_snapshot = self._command_history[self._turn_number - 1]
+            return None 
+        else:
+            self._turn_number -= 1
+            command_snapshot = self._command_history[self._turn_number - 1]
+            #previous_command_snapshot = self._command_history[self._turn_number - 1]
+            
+        self._board = command_snapshot.get_board()
+        #return str(previous_command_snapshot.get_turn())
+        #print(command_snapshot.get_turn())
+        #print(str(self))
+        #exit(0)
+        #turn = command_snapshot.get_turn()
+        #if turn:
+        #    return str(command_snapshot.get_turn())
+
 
     def execute_redo(self):
-        if len(self._history) < len(self._history):
-            # Restore the next game state from the history
-            snapshot = self._history[self._turn_number]
-            self._board = snapshot.board_state
-            self._turn_number = snapshot.next_turn_number
+        self._turn_number += 1
+
+        command_snapshot = self._command_history[self._turn_number]
+        self._board = command_snapshot.get_board()
+        #print(str(self._board))
+        #exit(0)
+        return str(command_snapshot.get_turn())
+
 
 
     def _current_player(self):
