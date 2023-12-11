@@ -38,14 +38,43 @@ class Player:
                 if self._valid_placement(current_worker_coordinate, turn.placement_coordinate, board):
 
                     # calculate height score, center score, distance score
-                    turn.move_score.height_score = self._calculate_height_score(board, turn)
-                    turn.move_score.center_score = self._calculate_center_score(board, turn)
-                    turn.move_score.distance_score = self._calculate_distance_score(board, turn)
-                    
+                    self._calc_score(board, turn)
+    
                     self._valid_placements.append(turn) 
-                    #print(str(turn))
+                    #print(str(turn) +" "+ str(turn.move_score))
+                    # print(str(turn))
                     #print(len(self._valid_placements))
+                
 
+    def _calc_score(self, board, turn):
+        move_score = turn.move_score
+
+        coordinates = [turn.placement_coordinate]
+
+        # get coordinate of player's other worker
+        for worker in self._own_workers:
+            if worker != turn.worker:
+                other_worker_coordinate = board.workers[turn.worker]
+                coordinates.append(other_worker_coordinate)
+        
+        for coordinate in coordinates:
+            move_score.height_score += self._calculate_height_score(board, coordinate, turn.move_score)
+            move_score.center_score += self._calculate_center_score(coordinate)
+
+        enemy_coordinates = []
+        for worker in board.workers:
+            if worker not in self._own_workers:
+                enemy_coordinates.append(board.workers[worker])
+
+        distance_before_eight = 0
+        for enemy_coordinate in enemy_coordinates:
+            distance_before_eight += self._calculate_distance_score(enemy_coordinate, coordinates)
+        move_score.distance_score = 8 - distance_before_eight
+
+
+        move_score.calc_total_score()
+                    
+        
     def _valid_placement(self, old_coordinate, new_coordinate, board):
         # checks if placement is in bounds 
         #print(str(board))
@@ -69,65 +98,78 @@ class Player:
             return False
         return True
     
-    def _calculate_height_score(self, board, turn):
+    def _calculate_height_score(self, board, coordinate, move_score):
         # height_score is the sum of the heights of the buildings a player's workers stand on
         
-        # get coordinate of player's other worker
-        for worker in self._own_workers:
-            if worker != turn.worker:
-                other_worker_coordinate = board.workers[turn.worker]
-                other_height = board.get_cell(other_worker_coordinate.row, other_worker_coordinate.column).height
+        # # get coordinate of player's other worker
+        # for worker in self._own_workers:
+        #     if worker != turn.worker:
+        #         other_worker_coordinate = board.workers[turn.worker]
+        #         other_height = board.get_cell(other_worker_coordinate.row, other_worker_coordinate.column).height
 
         # get height of worker in hypothetical turn
-        row = turn.placement_coordinate.row
-        column = turn.placement_coordinate.column
-        height = board.get_cell(row, column).height
-        if height == 3:
-            height = 1000
-
-        height_score = other_height + height
+        row = coordinate.row
+        column = coordinate.column
+        height_score = board.get_cell(row, column).height
+        if height_score == 3:
+            # worker will win if height = 3 so we made the height score very large to ensure this move is selected
+            move_score.can_win = True
+        
         return height_score
+        # height_score = other_height + height
+        
 
-    def _calculate_center_score(self, board, turn):
+    def _calculate_center_score(self, coordinate):
         # value the center space as 2, the ring around the center as 1, the edge spaces as 0
         # add these values for each of a player's workers to get the center_score
-        center_score = 0
-        coordinates = [turn.placement_coordinate]
+        # center_score = 0
+        # coordinates = [turn.placement_coordinate]
 
-        # get coordinate of player's other worker
-        for worker in self._own_workers:
-            if worker != turn.worker:
-                other_worker_coordinate = board.workers[turn.worker]
-                coordinates.append(other_worker_coordinate)
+        # # get coordinate of player's other worker
+        # for worker in self._own_workers:
+        #     if worker != turn.worker:
+        #         other_worker_coordinate = board.workers[turn.worker]
+        #         coordinates.append(other_worker_coordinate)
 
-        for coordinate in coordinates:
-            # center square
-            if coordinate.row == 2 and coordinate.column == 2:
-                center_score += 2
-            # outer ring
-            elif (coordinate.row == 0 or coordinate.row == 4) and (coordinate.column == 0 or coordinate.column == 4):
-                center_score += 0
-            # middle ring
-            else:
-                center_score +=1
-        return center_score
+        # for coordinate in coordinates:
+        row = coordinate.row 
+        column = coordinate.column 
 
-    def _calculate_distance_score(self, board, turn):
+
+        # center square
+        if row == 2 and column == 2:
+            return 2
+        # middle ring
+        elif (row == 1 or row == 2 or row == 3) and (column == 1 or column == 2 or column == 3):
+            return 1
+        # outer ring  
+        else:
+            return 0
+
+    def _calculate_distance_score(self, enemy_coordinate, own_coordinates):
+        # enemy coordinate is a single coordinate, own_coordinate is a list
+        
         # distance_score is the sum of the minimum distance to the opponent's workers
         # for blue, it would be min(distance from Z to A, distance from Y to A) + min(distance from Z to B, distance from Y to B)
-        distance_score = 0
-        own_coordinates = [turn.placement_coordinate]
-        opponents_coordinates = []
+        # opponents_coordinates = []
+        distance_scores = []
 
-        # get coordinate of player's other worker
-        for worker in self._own_workers:
-            if worker != turn.worker:
-                other_worker_coordinate = board.workers[turn.worker]
-                own_coordinates.append(other_worker_coordinate)
-        return distance_score
+        # for worker in board.workers:
+        #     if worker not in self._own_workers:
+        #         opponents_coordinates.append(board.workers[worker])
 
+        # calculate distance
+        for own_coordinate in own_coordinates:
+            distance = self._distance_between(own_coordinate, enemy_coordinate)
+            distance_scores.append(distance)
 
+        return min(distance_scores)
 
+    def _distance_between(self, own_coordinate, enemy_coordinate):
+        dist1 = abs(own_coordinate.row - enemy_coordinate.row)
+        dist2 = abs(own_coordinate.column - enemy_coordinate.column)
+        return max(dist1, dist2)
+    
     def _build_valid_builds(self, turn, board):
         self._valid_builds = []
         
@@ -152,6 +194,13 @@ class Player:
         if cell.worker_character != worker and cell.worker_character != " ":
             return False      
         return True
+    
+    def build_fake_turn(self, board):
+        coordinate = board.workers[self._own_workers[0]]
+        turn = Turn(self._own_workers[0])
+        turn.placement_coordinate = coordinate
+        self._calc_score(board, turn)
+        return turn 
 
     def build_turn(self):
         pass
@@ -264,7 +313,8 @@ class AIRandomPlayer(AIPlayer):
 
 class AIHeuristicPlayer(AIPlayer):
     def get_player_and_placement(self):
-        return max(self._valid_placements, key=self._valid_placements.move_score.total_score)
+        # return max(self._valid_placements, key=self._valid_placements.move_score.total_score)
+        return max(self._valid_placements, key=lambda placement: placement.move_score.total_score)
     #     max_move_score = 0
     #     best_placement = None
 

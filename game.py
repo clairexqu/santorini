@@ -1,21 +1,23 @@
 from board import Board
-from player import HumanPlayer, AIRandomPlayer
+from player import HumanPlayer, AIRandomPlayer, AIHeuristicPlayer
 from turn_commands import TurnBuilderCommand, DoTurnCommand
 from game_snapshot import CommandSnapshot  # GameSnapshot
+from turn import Turn
 from sys import exit  # delete
 
 
 class Game:
     """Class representing the Santorini game"""
 
-    def __init__(self):
+    def __init__(self, player1_type, player2_type, undo_redo_enabled, score_display_enabled):
         self._board = Board()
-        self.enable_undo_redo = False
-        self.enable_score_display = False
+
+        self._enable_undo_redo = undo_redo_enabled
+        self._score_display_enabled = score_display_enabled
 
         self.players = [
-            AIRandomPlayer("blue", ["Y", "Z"]),
-            AIRandomPlayer("white", ["A", "B"]),
+            self.create_player(player2_type, "blue", ["Y", "Z"]),
+            self.create_player(player1_type, "white", ["A", "B"]),
         ]
         self._turn_number = 1
         #self._command_history = []
@@ -24,23 +26,29 @@ class Game:
         #self._command_history_index = 0
         #self.create_snapshot(DoTurnCommand(self._board))
 
-    def create_player():
-        pass
+    def create_player(self, type, color, workers):
+        if type == "human":
+            return HumanPlayer(color, workers)
+        elif type == "heuristic":
+            return AIHeuristicPlayer(color, workers)
+        
+        return AIRandomPlayer(color, workers)
 
     def execute_turn(self):
         # self._print_turn_info()
 
-        undo_redo_next = input("undo, redo, or next\n").lower()
+        if self._enable_undo_redo:
+            undo_redo_next = input("undo, redo, or next\n").lower()
 
-        if undo_redo_next == "undo":
-            self.execute_undo()
-            return None
+            if undo_redo_next == "undo":
+                self.execute_undo()
+                return None
         
-        if undo_redo_next == "redo":
-            self.execute_redo()
-            return None
-        
-        #self._command_history_index += 1
+            if undo_redo_next == "redo":
+                self.execute_redo()
+                return None
+            
+            self._command_history_redo = []
 
         current_player = self._current_player()
 
@@ -50,26 +58,13 @@ class Game:
         do_turn_command = DoTurnCommand(self._board, turn_builder_command.turn)
         do_turn_command.execute()
 
-        # emptied out everytime you next
-        
-
-
-        # print("TURN # " + str(self._turn_number))
-        # print("COMMAND INDEX: " + str(self._command_history_index))
-
-        # if len(self._command_history) != self._turn_number:
-        #     print(len(self._command_history))
-        #     print(str(self._turn_number))
-        #     num_pops = (len(self._command_history) - self._turn_number) + 1
-        #     for _ in range(num_pops):
-        #         print("here")
-        #         self._command_history.pop()
-
-        self._command_history_redo = []
-
-
         self._turn_number = self._turn_number + 1
+        
         turn_summary = str(do_turn_command.turn)
+
+        if self._score_display_enabled:
+            turn_summary += f" {str(do_turn_command.turn.move_score)}"
+
         self.create_snapshot(do_turn_command)
 
         # index = 0
@@ -133,8 +128,13 @@ class Game:
 
     def __str__(self):
         # USE THIS EVENTUALLY
-        game_str = ""
-        game_str += f"{str(self._board)}\nTurn: {str(self._turn_number)}, {str(self._current_player())}"
+    
+        game_str = f"{str(self._board)}\nTurn: {str(self._turn_number)}, {str(self._current_player())}"
+
+        if self._score_display_enabled:
+            turn = self._current_player().build_fake_turn(self._board)
+            game_str += f", {str(turn.move_score)}"
+
         return game_str
 
     # def _print_turn_info(self):
