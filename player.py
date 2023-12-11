@@ -82,6 +82,8 @@ class Player:
         row = turn.placement_coordinate.row
         column = turn.placement_coordinate.column
         height = board.get_cell(row, column).height
+        if height == 3:
+            height = 1000
 
         height_score = other_height + height
         return height_score
@@ -114,7 +116,14 @@ class Player:
         # distance_score is the sum of the minimum distance to the opponent's workers
         # for blue, it would be min(distance from Z to A, distance from Y to A) + min(distance from Z to B, distance from Y to B)
         distance_score = 0
+        own_coordinates = [turn.placement_coordinate]
+        opponents_coordinates = []
 
+        # get coordinate of player's other worker
+        for worker in self._own_workers:
+            if worker != turn.worker:
+                other_worker_coordinate = board.workers[turn.worker]
+                own_coordinates.append(other_worker_coordinate)
         return distance_score
 
 
