@@ -1,5 +1,3 @@
-from coordinate import Coordinate
-
 class Turn:
     def __init__(self, worker = None, placement_direction = None, placement_transformation_coordinate = None, build_direction = None, build_transformation_coordinate = None):
         self.worker = worker
@@ -20,9 +18,7 @@ class Turn:
 
     def __str__(self):
         """Return the current board state."""
-        #turn_str = "" f"Worker: {self.worker}\nPlacement Direction: {self.placement_direction}\nPlacement Transformation Coord: {self.placement_transformation_coordinate}\nNew Placement Coordinate: {self.placement_coordinate}\nBuild Direction: {self.build_direction}\nBuild Transformation Coord: {self.build_transformation_coordinate}\nNew Build Coord: {self.build_coordinate}"
         turn_str = f"{self.worker},{self.placement_direction},{self.build_direction}"
-
         return turn_str
 
 class MoveScore:
@@ -40,7 +36,5 @@ class MoveScore:
 
     def __str__(self):
         """Return the current board state."""
-        #turn_str = "" f"Worker: {self.worker}\nPlacement Direction: {self.placement_direction}\nPlacement Transformation Coord: {self.placement_transformation_coordinate}\nNew Placement Coordinate: {self.placement_coordinate}\nBuild Direction: {self.build_direction}\nBuild Transformation Coord: {self.build_transformation_coordinate}\nNew Build Coord: {self.build_coordinate}"
         move_score_str = f"({self.height_score}, {self.center_score}, {self.distance_score})"
-
         return move_score_str

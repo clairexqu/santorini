@@ -1,11 +1,9 @@
-import abc
+from abc import ABC, abstractmethod
 
-from turn import Turn
-
-class Command(abc.ABC):
+class Command(ABC):
     """Abstract base class for commands."""
-
-    @abc.abstractmethod
+    
+    @abstractmethod
     def execute(self):
         """Execute the command."""
         pass
@@ -21,9 +19,6 @@ class TurnBuilderCommand(Command):
     def execute(self):
         # Build the turn object for the player
         self.turn = self.player.build_turn(self.board)
-
-    # def get_turn(self):
-    #     return self.turn
 
 class DoTurnCommand(Command):
     """Concrete command class for executing a move operation."""

@@ -71,20 +71,14 @@ class Player:
             distance_before_eight += self._calculate_distance_score(enemy_coordinate, coordinates)
         move_score.distance_score = 8 - distance_before_eight
 
-
         move_score.calc_total_score()
                     
-        
     def _valid_placement(self, old_coordinate, new_coordinate, board):
         # checks if placement is in bounds 
-        #print(str(board))
-        #print(str(old_coordinate))
         new_row = new_coordinate.row
         new_column = new_coordinate.column
         if (new_row < 0 or new_row > 4) or (new_column < 0 or new_column > 4):
             return False
-        #print(str(new_coordinate))
-            # return False
         # checks if cell is occupied
         old_cell = board.get_cell(old_coordinate.row, old_coordinate.column)
         new_cell = board.get_cell(new_row, new_column) 
@@ -100,24 +94,15 @@ class Player:
     
     def _calculate_height_score(self, board, coordinate, move_score):
         # height_score is the sum of the heights of the buildings a player's workers stand on
-        
-        # # get coordinate of player's other worker
-        # for worker in self._own_workers:
-        #     if worker != turn.worker:
-        #         other_worker_coordinate = board.workers[turn.worker]
-        #         other_height = board.get_cell(other_worker_coordinate.row, other_worker_coordinate.column).height
 
         # get height of worker in hypothetical turn
         row = coordinate.row
         column = coordinate.column
         height_score = board.get_cell(row, column).height
         if height_score == 3:
-            # worker will win if height = 3 so we made the height score very large to ensure this move is selected
             move_score.can_win = True
         
-        return height_score
-        # height_score = other_height + height
-        
+        return height_score        
 
     def _calculate_center_score(self, coordinate):
         # value the center space as 2, the ring around the center as 1, the edge spaces as 0
@@ -156,12 +141,10 @@ class Player:
     
     def _build_valid_builds(self, turn, board):
         self._valid_builds = []
-        
         for placement_direction, build_coordinate in DIRECTION_TRANSFORMATION.items():
             potential_build_coordinate = turn.placement_coordinate + build_coordinate
             if self._valid_build(turn.worker, potential_build_coordinate, board):
                 self._valid_builds.append(placement_direction)
-                #print(placement_direction)
 
     def _valid_build(self, worker, build_coordinate, board):    
         # check if build is out of bounds
@@ -196,21 +179,16 @@ class Player:
         for worker in self._own_workers:
             player_str += f"{str(worker)}"
         player_str += ")"
-
         return player_str
 
-
 class HumanPlayer(Player):
-    # def __init__(self, *args, **kwargs):
-    #     super().__init__(*args, **kwargs)
-
-    def worker_has_turn(self, potential_worker):
+    def _worker_has_turn(self, potential_worker):
         for turn in self._valid_placements:
             if turn.worker == potential_worker:
                 return True
         return False
 
-    def get_worker(self, workers_dict):
+    def _get_worker(self, workers_dict):
         while True:
             selected_worker = input("Select a worker to move\n").upper()
             if selected_worker not in workers_dict:
@@ -219,24 +197,24 @@ class HumanPlayer(Player):
             elif selected_worker not in self._own_workers:
                 print("That is not your worker")
                 continue
-            elif not self.worker_has_turn(selected_worker):
+            elif not self._worker_has_turn(selected_worker):
                 print("That worker cannot move")
                 continue
             return selected_worker
 
-    def get_placement(self, worker):
+    def _get_placement(self, worker):
         while True:
             selected_placement = input("Select a direction to move (n, ne, e, se, s, sw, w, nw)\n").lower()
             if selected_placement not in DIRECTION_TRANSFORMATION:
                 print("Not a valid direction")
                 continue
-            turn = self.get_valid_turn(worker, selected_placement)
+            turn = self._get_valid_turn(worker, selected_placement)
             if not turn:
                 print(f"Cannot move {selected_placement}")
                 continue
             return turn
 
-    def get_build(self):
+    def _get_build(self):
         while True:
             selected_build = input("Select a direction to build (n, ne, e, se, s, sw, w, nw)\n").lower()
             if selected_build not in DIRECTION_TRANSFORMATION:
@@ -247,22 +225,20 @@ class HumanPlayer(Player):
                 continue
             return selected_build
 
-    def get_valid_turn(self, worker, potential_placement):
+    def _get_valid_turn(self, worker, potential_placement):
         for turn in self._valid_placements:
             if turn.worker == worker and turn.placement_direction == potential_placement:
-                #turn.build_transformation_coordinate = DIRECTION_TRANSFORMATION[potential_placement]
                 return turn
         return None
         
     def build_turn(self, board):
-        
         self._build_valid_placements(board)
-        valid_worker = self.get_worker(board.workers)
+        valid_worker = self._get_worker(board.workers)
 
-        turn = self.get_placement(valid_worker)
+        turn = self._get_placement(valid_worker)
 
         self._build_valid_builds(turn, board)
-        build_direction = self.get_build()
+        build_direction = self._get_build()
         turn.build_direction = build_direction
         turn.build_transformation_coordinate = DIRECTION_TRANSFORMATION[build_direction]
         turn.calc_build_coordinate()
@@ -270,20 +246,17 @@ class HumanPlayer(Player):
         return turn
 
 class AIPlayer(Player):
-    # def __init__(self, *args, **kwargs):
-    #     super().__init__(*args, **kwargs)
-
-    def get_player_and_placement(self):
+    def _get_player_and_placement(self):
         pass
 
-    def get_build(self):
+    def _get_build(self):
         return choice(self._valid_builds)
 
     def build_turn(self, board):
         self._build_valid_placements(board)
-        turn = self.get_player_and_placement()
+        turn = self._get_player_and_placement()
         self._build_valid_builds(turn, board)
-        build_direction = self.get_build()
+        build_direction = self._get_build()
         turn.build_direction = build_direction
         turn.build_transformation_coordinate = DIRECTION_TRANSFORMATION[build_direction]
         turn.calc_build_coordinate()
@@ -291,30 +264,9 @@ class AIPlayer(Player):
         return turn        
 
 class AIRandomPlayer(AIPlayer):
-
-    def get_player_and_placement(self):
+    def _get_player_and_placement(self):
         return choice(self._valid_placements)
 
 class AIHeuristicPlayer(AIPlayer):
-    def get_player_and_placement(self):
-        # return max(self._valid_placements, key=self._valid_placements.move_score.total_score)
+    def _get_player_and_placement(self):
         return max(self._valid_placements, key=lambda placement: placement.move_score.total_score)
-    #     max_move_score = 0
-    #     best_placement = None
-
-    #     for placement in self._valid_placements:
-    #         # calculate height score, center score, distance score
-    #         height_score = self._calculate_height_score(placement)
-    #         center_score = self._calculate_center_score(placement)
-    #         distance_score = self._calculate_distance_score(placement)
-
-    #         # calculate move score using the given weights
-    #         move_score = 3 * height_score + 2 * center_score + 1 * distance_score
-
-    #         # update max_move_score and best_placement if the current placement has a higher move score
-    #         if move_score > max_move_score:
-    #             max_move_score = move_score
-    #             best_placement = placement
-
-    #     # Return the best turn with the maximum move score
-    #     return best_placement

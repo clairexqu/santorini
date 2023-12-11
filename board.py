@@ -12,8 +12,7 @@ class Board:
             "B": Coordinate(1, 3),
             "Y": Coordinate(1, 1),
             "Z": Coordinate(3, 3)}
-        
-        self.set_worker_start_position()
+        self._set_worker_start_position()
 
     def worker_on_three(self):
         for worker, coordinate in self.workers.items():
@@ -21,25 +20,25 @@ class Board:
             if cell.height == 3:
                 self.winner_worker = worker
 
-    def set_worker_start_position(self):
+    def _set_worker_start_position(self):
         for worker, coordinate in self.workers.items():
-            self.update_cell(coordinate, worker, 0)
+            self._update_cell(coordinate, worker, 0)
 
     def execute_turn(self, turn):
         worker = turn.worker
         # remove worker from old cell
-        self.update_cell(self.workers[worker], " ", 0)
+        self._update_cell(self.workers[worker], " ", 0)
         # add worker to new cell
-        self.update_cell(turn.placement_coordinate, worker, 0)
+        self._update_cell(turn.placement_coordinate, worker, 0)
         # edit the original coordinate dict
         self.workers[turn.worker] = turn.placement_coordinate
         # adding 1 to build cell 
-        self.update_cell(turn.build_coordinate," ", 1)
+        self._update_cell(turn.build_coordinate," ", 1)
 
         # checks to see if a worker won
         self.worker_on_three()
 
-    def update_cell(self, coordinate, new_char, height_add):
+    def _update_cell(self, coordinate, new_char, height_add):
         cell = self.get_cell(coordinate.row, coordinate.column)
         cell.worker_character = new_char
         cell.height += height_add
@@ -56,5 +55,4 @@ class Board:
                 board_str += f"|{str(cell)}"
             board_str += "|\n"
         board_str += "+--+--+--+--+--+"
-        
         return board_str
