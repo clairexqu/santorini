@@ -127,8 +127,6 @@ class Game:
         return self.players[self._turn_number % 2]
 
     def __str__(self):
-        # USE THIS EVENTUALLY
-    
         game_str = f"{str(self._board)}\nTurn: {str(self._turn_number)}, {str(self._current_player())}"
 
         if self._score_display_enabled:

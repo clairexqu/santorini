@@ -122,19 +122,8 @@ class Player:
     def _calculate_center_score(self, coordinate):
         # value the center space as 2, the ring around the center as 1, the edge spaces as 0
         # add these values for each of a player's workers to get the center_score
-        # center_score = 0
-        # coordinates = [turn.placement_coordinate]
-
-        # # get coordinate of player's other worker
-        # for worker in self._own_workers:
-        #     if worker != turn.worker:
-        #         other_worker_coordinate = board.workers[turn.worker]
-        #         coordinates.append(other_worker_coordinate)
-
-        # for coordinate in coordinates:
         row = coordinate.row 
         column = coordinate.column 
-
 
         # center square
         if row == 2 and column == 2:
@@ -151,12 +140,7 @@ class Player:
         
         # distance_score is the sum of the minimum distance to the opponent's workers
         # for blue, it would be min(distance from Z to A, distance from Y to A) + min(distance from Z to B, distance from Y to B)
-        # opponents_coordinates = []
         distance_scores = []
-
-        # for worker in board.workers:
-        #     if worker not in self._own_workers:
-        #         opponents_coordinates.append(board.workers[worker])
 
         # calculate distance
         for own_coordinate in own_coordinates:

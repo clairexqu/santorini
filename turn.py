@@ -21,7 +21,7 @@ class Turn:
     def __str__(self):
         """Return the current board state."""
         #turn_str = "" f"Worker: {self.worker}\nPlacement Direction: {self.placement_direction}\nPlacement Transformation Coord: {self.placement_transformation_coordinate}\nNew Placement Coordinate: {self.placement_coordinate}\nBuild Direction: {self.build_direction}\nBuild Transformation Coord: {self.build_transformation_coordinate}\nNew Build Coord: {self.build_coordinate}"
-        turn_str = f"{self.worker}, {self.placement_direction}, {self.build_direction}"
+        turn_str = f"{self.worker},{self.placement_direction},{self.build_direction}"
 
         return turn_str
 

@@ -20,7 +20,7 @@ class SetUpState(GameManagerState):
         player1_type = "human"
         player2_type = "human"
         undo_enabled = False
-        score_display_enabled = False
+        score_display_enabled = True
 
                 # Exclude the script name itself
         length_settings = len(manager.settings)
