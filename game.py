@@ -102,7 +102,7 @@ class Game:
 
     def is_game_over(self):
         current_player = self._current_player()
-        current_player._build_valid_placements(self._board)
+        current_player.build_valid_placements(self._board)
 
         if len(current_player._valid_placements) == 0:
             next_player = self.players[(self._turn_number + 1) % 2]

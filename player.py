@@ -25,7 +25,7 @@ class Player:
         self._valid_placements = [] # This is a list of turns 
         self._valid_builds = [] # This is a list of directions 
 
-    def _build_valid_placements(self, board):     
+    def build_valid_placements(self, board):     
         self._valid_placements = []
         
         for worker in self._own_workers:
@@ -54,9 +54,14 @@ class Player:
         # get coordinate of player's other worker
         for worker in self._own_workers:
             if worker != turn.worker:
-                other_worker_coordinate = board.workers[turn.worker]
+                #print(worker)
+                other_worker_coordinate = board.workers[worker]
+                #print(str(other_worker_coordinate))
                 coordinates.append(other_worker_coordinate)
         
+        #for coordinate in coordinates:
+        #    print(str(coordinate))
+
         for coordinate in coordinates:
             move_score.height_score += self._calculate_height_score(board, coordinate, turn.move_score)
             move_score.center_score += self._calculate_center_score(coordinate)
@@ -164,6 +169,7 @@ class Player:
     
     def build_fake_turn(self, board):
         coordinate = board.workers[self._own_workers[0]]
+        #print(str(coordinate))
         turn = Turn(self._own_workers[0])
         turn.placement_coordinate = coordinate
         self._calc_score(board, turn)
@@ -232,7 +238,7 @@ class HumanPlayer(Player):
         return None
         
     def build_turn(self, board):
-        self._build_valid_placements(board)
+        self.build_valid_placements(board)
         valid_worker = self._get_worker(board.workers)
 
         turn = self._get_placement(valid_worker)
@@ -253,7 +259,7 @@ class AIPlayer(Player):
         return choice(self._valid_builds)
 
     def build_turn(self, board):
-        self._build_valid_placements(board)
+        self.build_valid_placements(board)
         turn = self._get_player_and_placement()
         self._build_valid_builds(turn, board)
         build_direction = self._get_build()
