@@ -24,15 +24,12 @@ class Turn:
 class MoveScore:
     def __init__(self):
         self.height_score = 0
-        self.can_win = False
         self.center_score = 0
         self.distance_score = 0
         self.total_score = 0 
         
     def calc_total_score(self):
-        if self.can_win:
-            self.total_score = 100 * self.height_score + 2 * self.center_score + 1 * self.distance_score
-        self.total_score = 3 * self.height_score + 2 * self.center_score + 1 * self.distance_score
+        self.total_score += 3 * self.height_score + 2 * self.center_score + 1 * self.distance_score
 
     def __str__(self):
         """Return the current board state."""

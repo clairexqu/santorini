@@ -100,7 +100,7 @@ class Player:
         column = coordinate.column
         height_score = board.get_cell(row, column).height
         if height_score == 3:
-            move_score.can_win = True
+            move_score.total_score += 100
         
         return height_score        
 
