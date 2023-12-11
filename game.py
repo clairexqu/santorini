@@ -105,7 +105,7 @@ class Game:
         current_player.build_valid_placements(self._board)
 
         if len(current_player._valid_placements) == 0:
-            next_player = self.players[(self._turn_number + 1) % 2]
+            next_player = self._players[(self._turn_number + 1) % 2]
             return f"{next_player._color} has won"
 
         winner_worker = self._board.winner_worker
