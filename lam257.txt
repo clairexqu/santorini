@@ -1,0 +1,7 @@
+During the completion of Homework 6 my partner and I worked side by side about 95% of the time. 
+We mostly worked in the same classes rather than splitting up the work.
+We went to maybe 4-5 office hours together to work through our design. 
+We utilized collaborative tools such as Live Share and Git. 
+One significant benefit we discovered from working together was the ability to error check each other's code as we coded, resulting in cleaner code overall and less of a need to revisit code. 
+Moreover, debugging became easier as we could rely on a partner who had an understanding of the codebase as opposed to going to office hours. 
+Overall, the process was great. 
