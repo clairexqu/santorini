@@ -1,0 +1,5 @@
+I pair programmed with a partner on this pset. 
+In the first few days, we met up at office hours together to try to make a rough UML diagram and learn how to use git. 
+After that, we worked together using git and liveshare for the majority of the time instead of splitting up jobs, so we were able to work on the same things at the same time. 
+This proved to be extremely helpful actually, as we both contributed ideas and were able to write more accurate and concise code on the first run, and had to revisit less. 
+Even at times when we did work on different things, it was helpful to have someone to bounce ideas off of, so overall, it was a smooth experience.
