@@ -1,6 +1,5 @@
 from copy import deepcopy
 
-
 class CommandSnapshot:
     """Class representing a deep copied turn command which contains the board after a certain turn is executed."""
 
@@ -10,3 +9,5 @@ class CommandSnapshot:
     def get_board(self):
         """Returns a turn command."""
         return self._do_turn_command.board
+
+# FINAL DRAFT 

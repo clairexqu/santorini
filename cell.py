@@ -9,3 +9,6 @@ class Cell:
         """Returns a string of the cell consisting of the height and the character representing a worker, if any.
         Represents the current state of the cell"""
         return f"{self.height}{self.worker_character}"
+
+
+# FINAL DRAFT

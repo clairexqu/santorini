@@ -94,3 +94,5 @@ if __name__ == "__main__":
     settings = argv[1:]  # Exclude the script name itself
     manager = GameManager(settings)
     manager.start()
+
+# FINAL DRAFT

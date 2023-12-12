@@ -321,3 +321,6 @@ class AIHeuristicPlayer(AIPlayer):
             self._valid_placements,
             key=lambda placement: placement.move_score.total_score,
         )
+
+
+# FINAL DRAFT

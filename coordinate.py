@@ -12,3 +12,6 @@ class Coordinate:
         new_row = self.row + other.row
         new_column = self.column + other.column
         return Coordinate(new_row, new_column)
+
+
+# FINAL DRAFT

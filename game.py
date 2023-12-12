@@ -129,11 +129,14 @@ class Game:
         if len(current_player._valid_placements) == 0:
             next_player = self._players[(self._turn_number + 1) % 2]
             return f"{next_player._color} has won"
-        
-        # Checks if a player has won via one of their workers being in a cell of height 3 
+
+        # Checks if a player has won via one of their workers being in a cell of height 3
         winner_worker = self._board.winner_worker
         if winner_worker:
             for player in self._players:
                 if winner_worker in player._own_workers:
                     return f"{player._color} has won"
         return None
+
+
+# FINAL DRAFT

@@ -61,3 +61,6 @@ class MoveScore:
             f"({self.height_score}, {self.center_score}, {self.distance_score})"
         )
         return move_score_str
+
+
+# FINAL DRAFT
